@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Livre d’or</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; }
+    input, textarea { width: 100%; margin: 10px 0; padding: 8px; }
+    button { padding: 8px 16px; }
+    .message { border-bottom: 1px solid #ccc; margin-top: 10px; padding-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Livre d’or</h1>
+  <form id="form">
+    <input type="text" id="name" placeholder="Ton nom" required />
+    <textarea id="message" placeholder="Ton message" required></textarea>
+    <button type="submit">Envoyer</button>
+  </form>
+  <div id="messages"></div>
+
+  <script>
+    const form = document.getElementById('form');
+    const messagesDiv = document.getElementById('messages');
+
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('name').value;
+      const message = document.getElementById('message').value;
+      await fetch('/api/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, message })
+      });
+      form.reset();
+      loadMessages();
+    };
+
+    async function loadMessages() {
+      const res = await fetch('/api/messages');
+      const data = await res.json();
+      messagesDiv.innerHTML = data.map(m =>
+        `<div class="message"><strong>${m.name}</strong> : ${m.message}</div>`
+      ).join('');
+    }
+
+    loadMessages();
+  </script>
+</body>
+</html>
