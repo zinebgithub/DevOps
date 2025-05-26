@@ -1,0 +1,29 @@
+name: CI/CD - Livre d'Or
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🧾 Checkout code
+        uses: actions/checkout@v3
+
+      - name: 🛠️ Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: 📦 Install dependencies
+        run: npm install express
+
+      - name: 🧪 Basic check (file exists)
+        run: test -f server.js
+
+      - name: 🐳 Build Docker image
+        run: docker build -t livre-dor .
+
+      # Optionnel : déploiement, push Docker Hub, etc.
